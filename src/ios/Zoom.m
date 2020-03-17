@@ -261,6 +261,10 @@
             if ([options objectForKey:@"participant_id"] != [NSNull null]) {
                 participantID = options[@"participant_id"];
             }
+
+            // Automatically enable audio instead of requiring the user to enable it manually.
+            [[[MobileRTC sharedRTC] getMeetingSettings] setAutoConnectInternetAudio:YES];
+
             // Prepare meeting parameters.
             NSDictionary *paramDict = @{
                                         kMeetingParam_Username:displayName,
@@ -275,6 +279,17 @@
             }
         }
     });
+}
+
+- (void)onMeetingReady
+{
+    // Enable video as soon as the meeting is ready, because for some reason the setting setMuteVideoWhenJoinMeeting:NO didn't work.
+    MobileRTCMeetingService *ms = [[MobileRTC sharedRTC] getMeetingService];
+    if (ms != nil)
+    {
+        MobileRTCVideoError unmuteResult = [ms muteMyVideo:NO];
+        NSLog(@"onMeetingReady unmuteResult: %d", unmuteResult);
+    }
 }
 
 - (void)startMeeting:(CDVInvokedUrlCommand*)command
