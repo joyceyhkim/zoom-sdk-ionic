@@ -1,6 +1,6 @@
 {
-  "name": "cordova.plugin.zoom",
-  "version": "4.6.21666.0512",
+  "name": "cordova.plugin.zoom-auto-audio-and-video",
+  "version": "4.6.21666.0513",
   "description": "A Cordova Plugin for Zoom Video Conferencing",
   "cordova": {
     "id": "cordova.plugin.zoom",
@@ -13,5 +13,9 @@
     "cordova-android"
   ],
   "author": "Zoom Video Communication, Inc.",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joegarb/zoom-sdk-ionic.git"
+  }
 }
