@@ -56,7 +56,7 @@
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         if (username != nil && [username isKindOfClass:[NSString class]] && [username length] > 0 && password != nil && [password isKindOfClass:[NSString class]]  && [password length]) {
             // Try to log user in
-            [[[MobileRTC sharedRTC] getAuthService] loginWithEmail:username password:password remeberMe:YES];
+            [[[MobileRTC sharedRTC] getAuthService] loginWithEmail:username password:password rememberMe:YES];
         } else {
             NSMutableDictionary *res = [[NSMutableDictionary alloc] init];
             res[@"result"] = @NO;
