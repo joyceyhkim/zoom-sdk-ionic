@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2020-04-10 @ [v4.4.55130.0714](https://github.com/zoom/zoom-sdk-ionic/releases/tag/4.4.55130.0712)
+
+**Changed & Fixed**
+* Replaced existing ios SDK with zoom-sdk-ios@4.6.15805.0403 for UIWebView removal
+
 ## 2019-07-15 @ [v4.4.55130.0712](https://github.com/zoom/zoom-sdk-ionic/releases/tag/4.4.55130.0712)
 
 **Added**
