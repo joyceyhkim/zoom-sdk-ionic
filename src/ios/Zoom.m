@@ -180,7 +180,7 @@
             } else {
                 [[MobileRTC sharedRTC] getMeetingSettings ].disconnectAudioHidden = NO;
             }
-            
+
             // no_driving_mode
             if ([options objectForKey:@"no_driving_mode"] != [NSNull null]) {
                 [[[MobileRTC sharedRTC] getMeetingSettings] disableDriveMode: [options[@"no_driving_mode"] boolValue]];
@@ -193,21 +193,21 @@
             } else {
                 [[MobileRTC sharedRTC] getMeetingSettings].meetingInviteHidden = NO;
             }
-            
+
             // no_titlebar
             if ([options objectForKey:@"no_titlebar"] != [NSNull null]) {
                 [[MobileRTC sharedRTC] getMeetingSettings].topBarHidden = [options[@"no_titlebar"] boolValue];
             } else {
                 [[MobileRTC sharedRTC] getMeetingSettings].topBarHidden = NO;
             }
-            
+
             // no_video
             if ([options objectForKey:@"no_video"] != [NSNull null]) {
                 [[[MobileRTC sharedRTC] getMeetingSettings] setMuteVideoWhenJoinMeeting:[options[@"no_video"] boolValue]];
             } else {
                 [[[MobileRTC sharedRTC] getMeetingSettings] setMuteVideoWhenJoinMeeting:NO];
             }
-            
+
             // no_button_video
             if ([options objectForKey:@"no_button_video"] != [NSNull null]) {
                 [[MobileRTC sharedRTC] getMeetingSettings].meetingVideoHidden = [options[@"no_button_video"] boolValue];
@@ -261,6 +261,12 @@
             if ([options objectForKey:@"participant_id"] != [NSNull null]) {
                 participantID = options[@"participant_id"];
             }
+
+            // Automatically enable audio instead of requiring the user to enable it manually.
+            [[[MobileRTC sharedRTC] getMeetingSettings] setAutoConnectInternetAudio:YES];
+            // Automatically enabling video via the following line doesn't seem to be working as of now, so we also enable video in onMeetingReady which does work.
+            [[[MobileRTC sharedRTC] getMeetingSettings] setMuteVideoWhenJoinMeeting:NO];
+
             // Prepare meeting parameters.
             NSDictionary *paramDict = @{
                                         kMeetingParam_Username:displayName,
@@ -275,6 +281,17 @@
             }
         }
     });
+}
+
+- (void)onMeetingReady
+{
+    // Enable video as soon as the meeting is ready, because for some reason the setting setMuteVideoWhenJoinMeeting:NO didn't work.
+    MobileRTCMeetingService *ms = [[MobileRTC sharedRTC] getMeetingService];
+    if (ms != nil)
+    {
+        MobileRTCVideoError unmuteResult = [ms muteMyVideo:NO];
+        NSLog(@"onMeetingReady unmuteResult: %d", unmuteResult);
+    }
 }
 
 - (void)startMeeting:(CDVInvokedUrlCommand*)command
@@ -517,7 +534,7 @@
             } else {
                 [[MobileRTC sharedRTC] getMeetingSettings ].disconnectAudioHidden = NO;
             }
-            
+
             // no_driving_mode
             if ([options objectForKey:@"no_driving_mode"] != [NSNull null]) {
                 [[[MobileRTC sharedRTC] getMeetingSettings] disableDriveMode: [options[@"no_driving_mode"] boolValue]];
@@ -530,21 +547,21 @@
             } else {
                 [[MobileRTC sharedRTC] getMeetingSettings].meetingInviteHidden = NO;
             }
-            
+
             // no_titlebar
             if ([options objectForKey:@"no_titlebar"] != [NSNull null]) {
                 [[MobileRTC sharedRTC] getMeetingSettings].topBarHidden = [options[@"no_titlebar"] boolValue];
             } else {
                 [[MobileRTC sharedRTC] getMeetingSettings].topBarHidden = NO;
             }
-            
+
             // no_video
             if ([options objectForKey:@"no_video"] != [NSNull null]) {
                 [[[MobileRTC sharedRTC] getMeetingSettings] setMuteVideoWhenJoinMeeting:[options[@"no_video"] boolValue]];
             } else {
                 [[[MobileRTC sharedRTC] getMeetingSettings] setMuteVideoWhenJoinMeeting:NO];
             }
-            
+
             // no_button_video
             if ([options objectForKey:@"no_button_video"] != [NSNull null]) {
                 [[MobileRTC sharedRTC] getMeetingSettings].meetingVideoHidden = [options[@"no_button_video"] boolValue];

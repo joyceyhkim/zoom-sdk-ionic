@@ -33,6 +33,7 @@ import us.zoom.sdk.MeetingStatus;
 import us.zoom.sdk.MeetingError;
 import us.zoom.sdk.MeetingService;
 import us.zoom.sdk.MeetingServiceListener;
+import us.zoom.sdk.MeetingSettingsHelper;
 import us.zoom.sdk.InstantMeetingOptions;
 import us.zoom.sdk.StartMeetingOptions;
 import us.zoom.sdk.StartMeetingParams4NormalUser;
@@ -386,6 +387,11 @@ public class Zoom extends CordovaPlugin implements ZoomSDKAuthenticationListener
 
         // Get meeting service instance.
         MeetingService meetingService = zoomSDK.getMeetingService();
+
+        // Automatically enable audio and video upon joining a meeting so that the user doens't have to do so manually.
+        MeetingSettingsHelper msHelper = zoomSDK.getMeetingSettingsHelper();
+        msHelper.setAutoConnectVoIPWhenJoinMeeting(true);
+        msHelper.enableForceAutoStartMyVideoWhenJoinMeeting(true);
 
         // Configure join meeting parameters.
         JoinMeetingParams params = new JoinMeetingParams();
