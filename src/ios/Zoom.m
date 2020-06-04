@@ -888,4 +888,12 @@
     return message;
 }
 
+- (void)onMeetingEndedReason:(MobileRTCMeetingEndReason)reason
+{
+    NSLog(@"onMeetingEndedReason reason: %d", reason);
+    if (reason == 0) {
+        [self.commandDelegate evalJs:@"cordova.fireDocumentEvent('video:MeetingLeaveComplete')"];
+    }
+}
+
 @end
