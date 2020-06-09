@@ -11,10 +11,12 @@ function callNativeFunction(name, args, success, error) {
 
 var zoom = {
 
+    _meetingLeftlistener: [],
+
     initialize: function(appKey, appSecret, success, error) {
         callNativeFunction('initialize', [appKey, appSecret], success, error);
     },
-    
+
     login: function(username, password, success, error) {
         callNativeFunction('login', [username, password], success, error);
     },
@@ -28,7 +30,7 @@ var zoom = {
     },
 
     joinMeeting: function(meetingNo, meetingPassword, displayName, options, success, error) {
-         callNativeFunction('joinMeeting', [meetingNo, meetingPassword, displayName, options], success, error);
+        callNativeFunction('joinMeeting', [meetingNo, meetingPassword, displayName, options], success, error);
     },
 
     startMeetingWithZAK: function(meetingNo, displayName, zoomToken, zoomAccessToken, userId, options, success, error) {
@@ -45,8 +47,36 @@ var zoom = {
 
     setLocale: function(languageTag, success, error) {
         callNativeFunction('setLocale', [languageTag], success, error);
-    }
+    },
 
+    addMeetingLeaveListener: function (callback, scope) {
+        var type = typeof callback;
+
+        if (type !== 'function' && type !== 'string')
+            return;
+
+        this._meetingLeftlistener = [callback, scope || window];
+    },
+
+    removeMeetingLeaveListener: function () {
+        if (this._meetingLeftlistener.length > 0) {
+            this._meetingLeftlistener = [];
+        }
+    },
+
+    fireMeetingLeftEvent: function () {
+        if (!this._meetingLeftlistener)
+            return;
+
+        var fn    = this._meetingLeftlistener[0],
+            scope = this._meetingLeftlistener[1];
+
+        if (typeof fn !== 'function') {
+            fn = scope[fn];
+        }
+
+        fn.apply(scope);
+    }
 };
 
 module.exports = zoom;

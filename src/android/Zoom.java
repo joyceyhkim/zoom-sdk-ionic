@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.IllformedLocaleException;
 import java.util.concurrent.FutureTask;
+import java.util.List;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -29,21 +30,25 @@ import us.zoom.sdk.ZoomApiError;
 import us.zoom.sdk.ZoomAuthenticationError;
 import us.zoom.sdk.ZoomError;
 
+import us.zoom.sdk.InMeetingAudioController;
+import us.zoom.sdk.InMeetingChatMessage;
+import us.zoom.sdk.InMeetingEventHandler;
+import us.zoom.sdk.InMeetingService;
+import us.zoom.sdk.InMeetingServiceListener;
 import us.zoom.sdk.MeetingStatus;
 import us.zoom.sdk.MeetingError;
 import us.zoom.sdk.MeetingService;
 import us.zoom.sdk.MeetingServiceListener;
 import us.zoom.sdk.MeetingSettingsHelper;
+import us.zoom.sdk.MeetingViewsOptions;
 import us.zoom.sdk.InstantMeetingOptions;
 import us.zoom.sdk.StartMeetingOptions;
 import us.zoom.sdk.StartMeetingParams4NormalUser;
 import us.zoom.sdk.StartMeetingParamsWithoutLogin;
 import us.zoom.sdk.JoinMeetingParams;
 import us.zoom.sdk.JoinMeetingOptions;
-import us.zoom.sdk.MeetingViewsOptions;
 
 import cordova.plugin.zoom.AuthThread;
-
 /**
  * Zoom
  *
@@ -52,7 +57,7 @@ import cordova.plugin.zoom.AuthThread;
  * @author  Zoom Video Communications, Inc.
  * @version v4.6.21666.0512
  */
-public class Zoom extends CordovaPlugin implements ZoomSDKAuthenticationListener, MeetingServiceListener {
+public class Zoom extends CordovaPlugin implements ZoomSDKAuthenticationListener, MeetingServiceListener, InMeetingServiceListener {
     /* Debug variables */
     private static final String TAG = "<------- ZoomIonicAngularPlugin ---------->";
     private static final boolean DEBUG = false;
@@ -402,6 +407,10 @@ public class Zoom extends CordovaPlugin implements ZoomSDKAuthenticationListener
         if (meetingPassword.length() > 0) {
             params.password = meetingPassword;
         }
+
+        InMeetingService inMeetingService = ZoomSDK.getInstance().getInMeetingService();
+        //Register Event Listener
+        inMeetingService.addListener(this);
 
         if (option != null) {
             // If meeting option is provided, setup meeting options and join meeting.
@@ -997,7 +1006,7 @@ public class Zoom extends CordovaPlugin implements ZoomSDKAuthenticationListener
 
     /**
      * onZoomAuthIdentityExpired
-     * 
+     *
      * A listener to get notified when the authentication identity has expired.
      */
     @Override
@@ -1139,4 +1148,104 @@ public class Zoom extends CordovaPlugin implements ZoomSDKAuthenticationListener
         }
         return message.toString();
     }
+
+    @Override
+    public void onMeetingLeaveComplete(long l) {
+        try {
+            String event = String.format("javascript:cordova.plugins.Zoom.fireMeetingLeftEvent()");
+            webView.loadUrl(event);
+            InMeetingService inMeetingService = ZoomSDK.getInstance().getInMeetingService();
+            // Unregister Event Listener for this call
+            inMeetingService.removeListener(this);
+        } catch (Exception e) {
+            Log.v(TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public void onMeetingNeedPasswordOrDisplayName(boolean b, boolean b1, InMeetingEventHandler inMeetingEventHandler) {}
+
+    @Override
+    public void onWebinarNeedRegister() {}
+
+    @Override
+    public void onJoinWebinarNeedUserNameAndEmail(InMeetingEventHandler inMeetingEventHandler) {}
+
+    @Override
+    public void onMeetingNeedColseOtherMeeting(InMeetingEventHandler inMeetingEventHandler) {}
+
+    @Override
+    public void onMeetingFail(int i, int i1) {}
+
+    @Override
+    public void onMeetingUserJoin(List<Long> list) {}
+
+    @Override
+    public void onMeetingUserLeave(List<Long> list) {}
+
+    @Override
+    public void onMeetingUserUpdated(long l) {}
+
+    @Override
+    public void onMeetingHostChanged(long l) {}
+
+    @Override
+    public void onMeetingCoHostChanged(long l) {}
+
+    @Override
+    public void onActiveVideoUserChanged(long var1) {}
+
+    @Override
+    public void onActiveSpeakerVideoUserChanged(long var1) {}
+
+    @Override
+    public void onSpotlightVideoChanged(boolean b) {}
+
+    @Override
+    public void onUserVideoStatusChanged(long l) {}
+
+    @Override
+    public void onMicrophoneStatusError(InMeetingAudioController.MobileRTCMicrophoneError mobileRTCMicrophoneError) {}
+
+    @Override
+    public void onUserAudioStatusChanged(long l) {}
+
+    @Override
+    public void onUserAudioTypeChanged(long l) {}
+
+    @Override
+    public void onMyAudioSourceTypeChanged(int i) {}
+
+    @Override
+    public void onLowOrRaiseHandStatusChanged(long l, boolean b) {}
+
+    @Override
+    public void onMeetingSecureKeyNotification(byte[] bytes) {}
+
+    @Override
+    public void onChatMessageReceived(InMeetingChatMessage inMeetingChatMessage) {}
+
+    @Override
+    public void onUserNetworkQualityChanged(long userId) {}
+
+    @Override
+    public void onHostAskUnMute(long userId) {}
+
+    @Override
+    public void onHostAskStartVideo(long userId) {}
+
+    @Override
+    public void onSilentModeChanged(boolean inSilentMode) {}
+
+    @Override
+    public void onFreeMeetingReminder(boolean isOrignalHost, boolean canUpgrade, boolean isFirstGift) {}
+
+    @Override
+    public void onMeetingActiveVideo(long userId) {}
+
+    @Override
+    public void onSinkAttendeeChatPriviledgeChanged(int privilege) {}
+
+    @Override
+    public void onSinkAllowAttendeeChatNotification(int privilege) {}
 }
